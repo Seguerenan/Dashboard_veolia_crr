@@ -9,13 +9,14 @@ export interface OrdemServico {
   terminoEfetivo?: string;
 }
 
-export type StatusCode = "APPR" | "COMP" | "INPRG";
+export type StatusCode = "APPR" | "COMP" | "INPRG" | "WAPPR";
 export type TipoServicoCode = "CM" | "PM" | "PRJ" | "OTHER";
 
 export const STATUS_LABELS: Record<StatusCode, string> = {
   APPR: "Aprovada",
   COMP: "Concluída",
   INPRG: "Em andamento",
+  WAPPR: "Aguardando Planejamento",
 };
 
 export const TIPO_SERVICO_LABELS: Record<TipoServicoCode, string> = {
@@ -29,6 +30,7 @@ export const STATUS_COLORS: Record<StatusCode, string> = {
   APPR: "hsl(45, 100%, 55%)",
   COMP: "hsl(142, 60%, 50%)",
   INPRG: "hsl(199, 80%, 50%)",
+  WAPPR: "hsl(280, 65%, 60%)",
 };
 
 export const TIPO_SERVICO_COLORS: Record<TipoServicoCode, string> = {
