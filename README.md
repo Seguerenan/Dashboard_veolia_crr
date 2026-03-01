@@ -3,7 +3,7 @@
 
 ## Informações do projeto
 
-**URL**: [https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID](https://dashboard-veolia-os.netlify.app)
+**URL**: https://dashboard-veolia-os.netlify.app
 
 ## Como posso editar este código?
 
