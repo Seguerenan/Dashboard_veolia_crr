@@ -1,7 +1,7 @@
 import Papa from "papaparse";
 import type { OrdemServico, StatusCode, TipoServicoCode } from "./types";
 
-const VALID_STATUS: StatusCode[] = ["APPR", "COMP", "INPRG", "WAPPR"];
+const VALID_STATUS: StatusCode[] = ["APPR", "COMP", "INPRG", "WSCH"];
 const VALID_TIPO: TipoServicoCode[] = ["CM", "PM", "PRJ", "OTHER"];
 
 const COLUMN_MAP: Record<string, keyof OrdemServico> = {
