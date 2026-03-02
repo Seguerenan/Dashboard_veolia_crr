@@ -11,10 +11,10 @@ interface ChartsProps {
 }
 
 const tooltipStyle = {
-  backgroundColor: "hsl(222, 25%, 16%)",
-  border: "1px solid hsl(222, 20%, 24%)",
+  backgroundColor: "#ffffff",
+  border: "1px solid #e0e0e0",
   borderRadius: "8px",
-  color: "hsl(210, 20%, 92%)",
+  color: "#1f2937",
   fontSize: "13px",
 };
 
