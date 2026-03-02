@@ -42,9 +42,9 @@ const Index = () => {
     <div className="min-h-screen">
       {/* Header */}
       <header className="dashboard-header px-6 py-4 flex items-center justify-between sticky top-0 z-30">
-        <div className="flex items-center gap-3">
-          <BarChart3 className="h-6 w-6 text-primary" />
-          <h1 className="text-lg font-bold text-foreground">Dashboard — Ordens de Serviço</h1>
+        <div className="flex flex-col items-start gap-2">
+          <img src="/veolia-logo.svg" alt="Veolia" className="h-12 w-auto object-contain" />
+          <h1 className="text-xl font-bold text-foreground">Dashboard — Ordens de Serviço</h1>
         </div>
         <div className="flex items-center gap-2">
           <Button

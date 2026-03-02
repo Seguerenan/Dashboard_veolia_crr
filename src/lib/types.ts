@@ -15,7 +15,7 @@ export type TipoServicoCode = "CM" | "PM" | "PRJ" | "OTHER";
 export const STATUS_LABELS: Record<StatusCode, string> = {
   APPR: "Aprovada",
   COMP: "Concluída",
-  INPRG: "Em andamento",
+  INPRG: "Aguardando Planejamento",
   WSCH: "Aguardando Planejamento",
 };
 

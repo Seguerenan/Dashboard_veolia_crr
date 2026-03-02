@@ -11,7 +11,8 @@ export function KPICards({ data }: KPICardsProps) {
   const byStatus = {
     APPR: data.filter((d) => d.status === "APPR").length,
     COMP: data.filter((d) => d.status === "COMP").length,
-    INPRG: data.filter((d) => d.status === "INPRG").length,
+    // both INPRG and WSCH are now labeled "Aguardando Planejamento"; combine them
+    INPRG: data.filter((d) => d.status === "INPRG" || d.status === "WSCH").length,
   };
 
   const cards = [
