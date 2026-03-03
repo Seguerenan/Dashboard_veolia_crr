@@ -31,13 +31,14 @@ export function CsvUpload({ onUploaded }: CsvUploadProps) {
         return;
       }
 
-      const { error } = await supabase.from("ordens_servico").upsert(data, {
+      const { error, data: result } = await supabase.from("ordens_servico").upsert(data, {
         onConflict: "ordem_servico",
       });
 
       if (error) {
         setStatus("error");
-        setMessage(`Erro ao salvar: ${error.message}`);
+        setMessage(`Erro do Supabase: ${error.message}`);
+        console.error("Supabase error:", error);
         return;
       }
 

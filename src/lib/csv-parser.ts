@@ -1,14 +1,14 @@
 import Papa from "papaparse";
 
 export interface OrdemServicoRow {
-  ordem_servico: string;
-  descricao: string;
-  local: string;
-  ativo: string;
-  status_codigo: string;
-  tipo_servico: string;
-  inicio_previsto: string; // YYYY-MM-DD
-  termino_efetivo: string; // YYYY-MM-DD
+  ordem_servico: string; // REQUIRED - unique constraint
+  descricao?: string;
+  local?: string;
+  ativo?: string;
+  status_codigo?: string;
+  tipo_servico?: string;
+  inicio_previsto?: string; // YYYY-MM-DD
+  termino_efetivo?: string; // YYYY-MM-DD
 }
 
 const COLUMN_MAP: Record<string, keyof OrdemServicoRow> = {
@@ -59,28 +59,42 @@ export function parseCSV(file: File): Promise<OrdemServicoRow[]> {
       complete: (results) => {
         try {
           const data: OrdemServicoRow[] = [];
+          const errors: string[] = [];
 
-          for (const row of results.data as Record<string, string>[]) {
+          for (let rowIndex = 0; rowIndex < results.data.length; rowIndex++) {
+            const row = results.data[rowIndex] as Record<string, string>;
             const mapped: Partial<OrdemServicoRow> = {};
 
             for (const [rawCol, value] of Object.entries(row)) {
               const col = rawCol.trim();
               // Ignore empty or "Unnamed" columns
-              if (!col || col.toLowerCase().startsWith("unnamed") || !value?.trim()) continue;
+              if (!col || col.toLowerCase().startsWith("unnamed")) continue;
+              if (!value || !value.trim()) continue;
 
               const key = COLUMN_MAP[col.toLowerCase()];
               if (!key) continue;
 
               if (key === "inicio_previsto" || key === "termino_efetivo") {
-                (mapped as any)[key] = normalizeDate(value);
+                const normalized = normalizeDate(value);
+                if (normalized) {
+                  (mapped as any)[key] = normalized;
+                }
               } else {
                 (mapped as any)[key] = value.trim();
               }
             }
 
-            if (mapped.ordem_servico && mapped.status_codigo && mapped.tipo_servico) {
-              data.push(mapped as OrdemServicoRow);
+            // Only require ordem_servico (unique constraint)
+            if (!mapped.ordem_servico) {
+              errors.push(`Linha ${rowIndex + 2}: Campo "Ordem de Serviço" é obrigatório`);
+              continue;
             }
+
+            data.push(mapped as OrdemServicoRow);
+          }
+
+          if (errors.length > 0) {
+            console.warn("Linhas com erros de validação:", errors);
           }
 
           resolve(data);
@@ -91,4 +105,5 @@ export function parseCSV(file: File): Promise<OrdemServicoRow[]> {
       error: (err) => reject(err),
     });
   });
+}
 }
