@@ -1,23 +1,31 @@
 import Papa from "papaparse";
-import type { OrdemServico, StatusCode, TipoServicoCode } from "./types";
 
-const VALID_STATUS: StatusCode[] = ["APPR", "COMP", "INPRG", "WSCH"];
-const VALID_TIPO: TipoServicoCode[] = ["CM", "PM", "PRJ", "OTHER"];
+export interface OrdemServicoRow {
+  ordem_servico: string;
+  descricao: string;
+  local: string;
+  ativo: string;
+  status_codigo: string;
+  tipo_servico: string;
+  inicio_previsto: string; // YYYY-MM-DD
+  termino_efetivo: string; // YYYY-MM-DD
+}
 
-const COLUMN_MAP: Record<string, keyof OrdemServico> = {
-  "ordem de serviço": "ordemServico",
-  "ordem de servico": "ordemServico",
+const COLUMN_MAP: Record<string, keyof OrdemServicoRow> = {
+  "ordem de serviço": "ordem_servico",
+  "ordem de servico": "ordem_servico",
   "descrição": "descricao",
   "descricao": "descricao",
   "local": "local",
   "ativo": "ativo",
-  "status": "status",
-  "início previsto": "inicioPrevisto",
-  "inicio previsto": "inicioPrevisto",
-  "tipo de serviço": "tipoServico",
-  "tipo de servico": "tipoServico",
-  "término efetivo": "terminoEfetivo",
-  "termino efetivo": "terminoEfetivo",
+  "status": "status_codigo",
+  "status_codigo": "status_codigo",
+  "início previsto": "inicio_previsto",
+  "inicio previsto": "inicio_previsto",
+  "tipo de serviço": "tipo_servico",
+  "tipo de servico": "tipo_servico",
+  "término efetivo": "termino_efetivo",
+  "termino efetivo": "termino_efetivo",
 };
 
 function normalizeDate(value: string): string {
@@ -42,7 +50,7 @@ function normalizeDate(value: string): string {
   return cleaned;
 }
 
-export function parseCSV(file: File): Promise<OrdemServico[]> {
+export function parseCSV(file: File): Promise<OrdemServicoRow[]> {
   return new Promise((resolve, reject) => {
     Papa.parse(file, {
       header: true,
@@ -50,10 +58,10 @@ export function parseCSV(file: File): Promise<OrdemServico[]> {
       skipEmptyLines: true,
       complete: (results) => {
         try {
-          const data: OrdemServico[] = [];
+          const data: OrdemServicoRow[] = [];
 
           for (const row of results.data as Record<string, string>[]) {
-            const mapped: Partial<OrdemServico> = {};
+            const mapped: Partial<OrdemServicoRow> = {};
 
             for (const [rawCol, value] of Object.entries(row)) {
               const col = rawCol.trim();
@@ -63,21 +71,15 @@ export function parseCSV(file: File): Promise<OrdemServico[]> {
               const key = COLUMN_MAP[col.toLowerCase()];
               if (!key) continue;
 
-              if (key === "inicioPrevisto" || key === "terminoEfetivo") {
+              if (key === "inicio_previsto" || key === "termino_efetivo") {
                 (mapped as any)[key] = normalizeDate(value);
-              } else if (key === "status") {
-                const upper = value.trim().toUpperCase() as StatusCode;
-                if (VALID_STATUS.includes(upper)) mapped.status = upper;
-              } else if (key === "tipoServico") {
-                const upper = value.trim().toUpperCase() as TipoServicoCode;
-                if (VALID_TIPO.includes(upper)) mapped.tipoServico = upper;
               } else {
                 (mapped as any)[key] = value.trim();
               }
             }
 
-            if (mapped.ordemServico && mapped.status && mapped.tipoServico) {
-              data.push(mapped as OrdemServico);
+            if (mapped.ordem_servico && mapped.status_codigo && mapped.tipo_servico) {
+              data.push(mapped as OrdemServicoRow);
             }
           }
 

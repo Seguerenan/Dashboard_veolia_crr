@@ -1,12 +1,12 @@
 import { useState, useCallback } from "react";
 import { Upload, FileText, CheckCircle2, AlertCircle } from "lucide-react";
 import { parseCSV } from "@/lib/csv-parser";
-import { saveData } from "@/lib/data-store";
+import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
-import type { OrdemServico } from "@/lib/types";
+import type { OrdemServicoRow } from "@/lib/csv-parser";
 
 interface CsvUploadProps {
-  onUploaded: (data: OrdemServico[]) => void;
+  onUploaded?: (count: number) => void;
 }
 
 export function CsvUpload({ onUploaded }: CsvUploadProps) {
@@ -22,7 +22,7 @@ export function CsvUpload({ onUploaded }: CsvUploadProps) {
       return;
     }
     setStatus("loading");
-    setMessage("Processando arquivo...");
+    setMessage("Processando e enviando dados...");
     try {
       const data = await parseCSV(file);
       if (data.length === 0) {
@@ -30,11 +30,21 @@ export function CsvUpload({ onUploaded }: CsvUploadProps) {
         setMessage("Nenhum registro válido encontrado no arquivo.");
         return;
       }
-      saveData(data);
+
+      const { error } = await supabase.from("ordens_servico").upsert(data, {
+        onConflict: "ordem_servico",
+      });
+
+      if (error) {
+        setStatus("error");
+        setMessage(`Erro ao salvar: ${error.message}`);
+        return;
+      }
+
       setCount(data.length);
       setStatus("success");
-      setMessage(`${data.length} ordens de serviço importadas com sucesso.`);
-      onUploaded(data);
+      setMessage(`${data.length} ordens de serviço importadas com sucesso!`);
+      onUploaded?.(data.length);
     } catch (e) {
       setStatus("error");
       setMessage("Erro ao processar o arquivo CSV.");
