@@ -67,8 +67,8 @@ export default function AdminLogin() {
       </div>
 
       {/* Card Login */}
-      <div className="bg-black/50 backdrop-blur-md rounded-lg w-full max-w-md p-1 mt-40">
-        <Card className="bg-black/80 text-yellow-400 rounded-lg shadow-lg">
+      <div className="bg-black/50 backdrop-blur-md rounded-lg w-full max-w-xs p-6 mt-100">
+  <Card className="bg-black/80 text-yellow-400 rounded-lg shadow-lg min-h-[250px] max-h-[260px]">
           <CardHeader>
             <CardTitle>Admin Login</CardTitle>
           </CardHeader>
