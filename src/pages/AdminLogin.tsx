@@ -1,23 +1,34 @@
 // src/pages/AdminLogin.tsx
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+
 import { ArrowLeft } from "lucide-react";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // 🔒 LOGOUT AUTOMÁTICO AO CARREGAR A PÁGINA
+  useEffect(() => {
+    supabase.auth.signOut();
+  }, []);
+
+  // 🔐 FUNÇÃO DE LOGIN
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+
     setLoading(true);
     setErrorMessage("");
 
@@ -29,10 +40,12 @@ export default function AdminLogin() {
     setLoading(false);
 
     if (error) {
-      setErrorMessage(error.message);
-    } else if (data.session) {
-      navigate("/admin");
+      setErrorMessage("Email ou senha inválidos.");
+      return;
     }
+
+    // login OK → vai para página admin
+    navigate("/admin");
   };
 
   return (
@@ -40,7 +53,7 @@ export default function AdminLogin() {
       className="flex items-start justify-center min-h-screen bg-cover bg-center"
       style={{ backgroundImage: `url('/veolia.jpg')` }}
     >
-      {/* Botão Dashboard */}
+      {/* Botão voltar para dashboard */}
       <div className="absolute top-4 left-4">
         <Button
           variant="outline"
@@ -53,12 +66,13 @@ export default function AdminLogin() {
         </Button>
       </div>
 
-      {/* Card com blur */}
-      <div className="bg-black/50 backdrop-blur-md rounded-lg w-full max-w-md p-0.2 mt-120 sm:mt-100">
+      {/* Card Login */}
+      <div className="bg-black/50 backdrop-blur-md rounded-lg w-full max-w-md p-1 mt-40">
         <Card className="bg-black/80 text-yellow-400 rounded-lg shadow-lg">
           <CardHeader>
             <CardTitle>Admin Login</CardTitle>
           </CardHeader>
+
           <CardContent>
             {errorMessage && (
               <Alert variant="destructive" className="mb-4">
@@ -72,7 +86,7 @@ export default function AdminLogin() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="admin@exemplo.com"
+                  placeholder="admin@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -91,7 +105,11 @@ export default function AdminLogin() {
                 />
               </div>
 
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={loading}
+              >
                 {loading ? "Entrando..." : "Entrar"}
               </Button>
             </form>
