@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { format, differenceInDays, parseISO } from "date-fns";
 import type { OrdemServico } from "@/lib/types";
 import { TIPO_SERVICO_LABELS, STATUS_LABELS, STATUS_COLORS, TIPO_SERVICO_COLORS } from "@/lib/types";
@@ -6,6 +6,16 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, LineChart, Line, Legend, ComposedChart, Area
 } from "recharts";
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
+  return isMobile;
+}
 
 interface ChartsProps {
   data: OrdemServico[];
@@ -20,6 +30,7 @@ const tooltipStyle = {
 };
 
 export function ChartBarTipoServico({ data }: ChartsProps) {
+  const isMobile = useIsMobile();
   const chartData = useMemo(() => {
     const counts: Record<string, number> = {};
     data.forEach((d) => {
@@ -33,14 +44,14 @@ export function ChartBarTipoServico({ data }: ChartsProps) {
 
   return (
     <div className="chart-container">
-      <h3 className="text-sm font-semibold text-muted-foreground mb-4 uppercase tracking-wide">
+      <h3 className="text-sm font-semibold text-muted-foreground mb-3 sm:mb-4 uppercase tracking-wide">
         Ordens por Tipo de Serviço
       </h3>
-      <ResponsiveContainer width="100%" height={280}>
-        <BarChart data={chartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+      <ResponsiveContainer width="100%" height={isMobile ? 200 : 280}>
+        <BarChart data={chartData} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="hsl(222, 20%, 22%)" />
-          <XAxis dataKey="name" tick={{ fill: "hsl(215, 15%, 55%)", fontSize: 11 }} axisLine={false} tickLine={false} />
-          <YAxis tick={{ fill: "hsl(215, 15%, 55%)", fontSize: 11 }} axisLine={false} tickLine={false} />
+          <XAxis dataKey="name" tick={{ fill: "hsl(215, 15%, 55%)", fontSize: isMobile ? 9 : 11 }} axisLine={false} tickLine={false} />
+          <YAxis tick={{ fill: "hsl(215, 15%, 55%)", fontSize: isMobile ? 9 : 11 }} axisLine={false} tickLine={false} width={isMobile ? 25 : 40} />
           <Tooltip contentStyle={tooltipStyle} />
           <Bar dataKey="value" radius={[4, 4, 0, 0]}>
             {chartData.map((_, i) => (
@@ -54,6 +65,7 @@ export function ChartBarTipoServico({ data }: ChartsProps) {
 }
 
 export function ChartPieStatus({ data }: ChartsProps) {
+  const isMobile = useIsMobile();
   const chartData = useMemo(() => {
     const counts: Record<string, number> = {};
     data.forEach((d) => {
@@ -64,31 +76,36 @@ export function ChartPieStatus({ data }: ChartsProps) {
   }, [data]);
 
   const colors = Object.values(STATUS_COLORS);
+  const outerRadius = isMobile ? 70 : 100;
+  const innerRadius = isMobile ? 40 : 60;
 
   return (
     <div className="chart-container">
-      <h3 className="text-sm font-semibold text-muted-foreground mb-4 uppercase tracking-wide">
+      <h3 className="text-sm font-semibold text-muted-foreground mb-3 sm:mb-4 uppercase tracking-wide">
         Ordens por Status
       </h3>
-      <ResponsiveContainer width="100%" height={280}>
+      <ResponsiveContainer width="100%" height={isMobile ? 200 : 280}>
         <PieChart>
           <Pie
             data={chartData}
             cx="50%"
             cy="50%"
-            innerRadius={60}
-            outerRadius={100}
+            innerRadius={innerRadius}
+            outerRadius={outerRadius}
             paddingAngle={3}
             dataKey="value"
-            label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-            labelLine={false}
+            label={isMobile
+              ? ({ percent }) => `${(percent * 100).toFixed(0)}%`
+              : ({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`
+            }
+            labelLine={!isMobile}
           >
             {chartData.map((_, i) => (
               <Cell key={i} fill={colors[i % colors.length]} />
             ))}
           </Pie>
           <Tooltip contentStyle={tooltipStyle} />
-          <Legend wrapperStyle={{ fontSize: "12px", color: "hsl(215, 15%, 55%)" }} />
+          <Legend wrapperStyle={{ fontSize: isMobile ? "11px" : "12px", color: "hsl(215, 15%, 55%)" }} />
         </PieChart>
       </ResponsiveContainer>
     </div>
@@ -131,9 +148,11 @@ export function ChartLineByMonth({ data }: ChartsProps) {
       }));
   }, [data, viewMode]);
 
+  const isMobile = useIsMobile();
+
   return (
     <div className="chart-container">
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-3 sm:mb-4">
         <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
           Ordens Previstas
         </h3>
@@ -160,11 +179,11 @@ export function ChartLineByMonth({ data }: ChartsProps) {
           </button>
         </div>
       </div>
-      <ResponsiveContainer width="100%" height={280}>
-        <ComposedChart data={chartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+      <ResponsiveContainer width="100%" height={isMobile ? 200 : 280}>
+        <ComposedChart data={chartData} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="hsl(222, 20%, 22%)" />
-          <XAxis dataKey="name" tick={{ fill: "hsl(215, 15%, 55%)", fontSize: 11 }} axisLine={false} tickLine={false} />
-          <YAxis tick={{ fill: "hsl(215, 15%, 55%)", fontSize: 11 }} axisLine={false} tickLine={false} />
+          <XAxis dataKey="name" tick={{ fill: "hsl(215, 15%, 55%)", fontSize: isMobile ? 9 : 11 }} axisLine={false} tickLine={false} />
+          <YAxis tick={{ fill: "hsl(215, 15%, 55%)", fontSize: isMobile ? 9 : 11 }} axisLine={false} tickLine={false} width={isMobile ? 25 : 40} />
           <Tooltip 
             contentStyle={tooltipStyle}
             cursor={{ fill: "hsl(222, 20%, 22%)", opacity: 0.4 }}

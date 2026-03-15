@@ -43,35 +43,36 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       {/* Header */}
-      <header className="dashboard-header px-6 py-4 flex items-center justify-between sticky top-0 z-30">
-        <div className="flex flex-col items-start gap-2">
-          <img src="/veolia-logo.svg" alt="Veolia" className="h-12 w-auto object-contain" />
-          <h1 className="text-xl font-bold text-foreground">Dashboard — Ordens de Serviço</h1>
+      <header className="dashboard-header px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between sticky top-0 z-30">
+        <div className="flex flex-col items-start gap-1">
+          <img src="/veolia-logo.svg" alt="Veolia" className="h-8 sm:h-12 w-auto object-contain" />
+          <h1 className="hidden sm:block text-xl font-bold text-foreground">Dashboard — Ordens de Serviço</h1>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setShowFilters(!showFilters)}
-            className="text-muted-foreground hover:text-foreground"
+            className="text-muted-foreground hover:text-foreground px-2 sm:px-3"
           >
-            <Filter className="h-4 w-4 mr-1" />
-            Filtros
+            <Filter className="h-4 w-4 sm:mr-1" />
+            <span className="hidden sm:inline">Filtros</span>
           </Button>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => navigate("/admin")}
-            className="text-muted-foreground hover:text-foreground"
+            className="text-muted-foreground hover:text-foreground px-2 sm:px-3"
           >
-            Admin
+            <span className="hidden sm:inline">Admin</span>
+            <span className="sm:hidden text-xs">⚙</span>
           </Button>
         </div>
       </header>
 
-      <main className="p-6 space-y-6 max-w-[1440px] mx-auto">
+      <main className="p-3 sm:p-6 space-y-4 sm:space-y-6 max-w-[1440px] mx-auto">
         {/* Filters */}
         {showFilters && (
           <FilterBar filters={filters} onChange={setFilters} data={allData} />
@@ -82,18 +83,18 @@ const Index = () => {
         <TipoServicoKPIs data={filteredData} />
 
         {/* Gráficos: barras e rosca */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           <ChartBarTipoServico data={filteredData} />
           <ChartPieStatus data={filteredData} />
         </div>
 
-        {/* Ordens Previstas: largura total na parte de baixo */}
-        <div className="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] px-4 sm:px-6">
+        {/* Ordens Previstas: largura total */}
+        <div className="w-full">
           <ChartLineByMonth data={filteredData} />
         </div>
 
         {/* Footer info */}
-        <p className="text-xs text-muted-foreground text-center pt-4">
+        <p className="text-xs text-muted-foreground text-center pt-2 sm:pt-4">
           Exibindo {filteredData.length.toLocaleString("pt-BR")} de {allData.length.toLocaleString("pt-BR")} ordens de serviço
         </p>
       </main>

@@ -51,14 +51,14 @@ export function FilterBar({ filters, onChange, data }: FilterBarProps) {
 
   return (
     <div className="filter-bar">
-      <div className="flex flex-wrap items-end gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:flex lg:flex-wrap items-end gap-3">
         <div className="flex flex-col gap-1">
           <label className="text-xs text-muted-foreground font-medium">Data Início</label>
           <Input
             type="date"
             value={filters.dataInicio}
             onChange={(e) => set("dataInicio", e.target.value)}
-            className="w-[150px] bg-secondary border-border text-foreground text-sm h-9"
+            className="w-full lg:w-[150px] bg-secondary border-border text-foreground text-sm h-9"
           />
         </div>
         <div className="flex flex-col gap-1">
@@ -67,13 +67,13 @@ export function FilterBar({ filters, onChange, data }: FilterBarProps) {
             type="date"
             value={filters.dataFim}
             onChange={(e) => set("dataFim", e.target.value)}
-            className="w-[150px] bg-secondary border-border text-foreground text-sm h-9"
+            className="w-full lg:w-[150px] bg-secondary border-border text-foreground text-sm h-9"
           />
         </div>
         <div className="flex flex-col gap-1">
           <label className="text-xs text-muted-foreground font-medium">Tipo de Serviço</label>
           <Select value={filters.tipoServico} onValueChange={(v) => set("tipoServico", v)}>
-            <SelectTrigger className="w-[180px] bg-secondary border-border text-sm h-9">
+            <SelectTrigger className="w-full lg:w-[180px] bg-secondary border-border text-sm h-9">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -87,7 +87,7 @@ export function FilterBar({ filters, onChange, data }: FilterBarProps) {
         <div className="flex flex-col gap-1">
           <label className="text-xs text-muted-foreground font-medium">Status</label>
           <Select value={filters.status} onValueChange={(v) => set("status", v)}>
-            <SelectTrigger className="w-[160px] bg-secondary border-border text-sm h-9">
+            <SelectTrigger className="w-full lg:w-[160px] bg-secondary border-border text-sm h-9">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -101,7 +101,7 @@ export function FilterBar({ filters, onChange, data }: FilterBarProps) {
         <div className="flex flex-col gap-1">
           <label className="text-xs text-muted-foreground font-medium">Ativo</label>
           <Select value={filters.ativo} onValueChange={(v) => set("ativo", v)}>
-            <SelectTrigger className="w-[160px] bg-secondary border-border text-sm h-9">
+            <SelectTrigger className="w-full lg:w-[160px] bg-secondary border-border text-sm h-9">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -113,7 +113,7 @@ export function FilterBar({ filters, onChange, data }: FilterBarProps) {
         <div className="flex flex-col gap-1">
           <label className="text-xs text-muted-foreground font-medium">Local</label>
           <Select value={filters.local} onValueChange={(v) => set("local", v)}>
-            <SelectTrigger className="w-[160px] bg-secondary border-border text-sm h-9">
+            <SelectTrigger className="w-full lg:w-[160px] bg-secondary border-border text-sm h-9">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -123,9 +123,11 @@ export function FilterBar({ filters, onChange, data }: FilterBarProps) {
           </Select>
         </div>
         {hasFilters && (
-          <Button variant="ghost" size="sm" onClick={() => onChange(emptyFilters)} className="text-muted-foreground hover:text-foreground h-9">
-            <X className="h-4 w-4 mr-1" /> Limpar
-          </Button>
+          <div className="col-span-2 sm:col-span-3 lg:col-span-1 flex">
+            <Button variant="ghost" size="sm" onClick={() => onChange(emptyFilters)} className="text-muted-foreground hover:text-foreground h-9">
+              <X className="h-4 w-4 mr-1" /> Limpar filtros
+            </Button>
+          </div>
         )}
       </div>
     </div>
