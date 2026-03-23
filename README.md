@@ -3,7 +3,7 @@
 
 ## Informações do projeto
 
-**URL**: https://dashboard-veolia-os.netlify.app
+**URL**: https://dashboard-veolia-crr.vercel.app
 
 ## Como posso editar este código?
 
